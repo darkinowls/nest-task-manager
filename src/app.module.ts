@@ -4,11 +4,11 @@ import { AppService } from "./app.service";
 import { TasksModule } from "./tasks/tasks.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
+import { UserModule } from "./user/user.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TasksModule,
     TypeOrmModule.forRootAsync(
       {
         useFactory: () => ({
@@ -19,14 +19,15 @@ import { ConfigModule } from "@nestjs/config";
           database: process.env.POSTGRES_DB,
           port: parseInt(process.env.POSTGRES_PORT),
           autoLoadEntities: true,
-          synchronize: process.env.NODE_ENV !== "production",
+          synchronize: process.env.NODE_ENV !== "production"
         })
 
 
       }
-    )
+    ),
 
-
+    UserModule,
+    TasksModule
   ],
   controllers: [AppController],
   providers: [AppService]
