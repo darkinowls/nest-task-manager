@@ -18,13 +18,13 @@ export class TasksController {
   }
 
 
-  @Get()
-  findAll(@Query() search: GetTasksDto) {
-    if (search) {
+  @Get('/')
+  async findAll(@Query() search?: GetTasksDto) {
+    if ( Object.keys(search).length > 0) {
       console.log(search);
       return this.tasksService.filterAll(search);
     }
-    return this.tasksService.findAll();
+    return await this.tasksService.findAll();
   }
 
   @Get(":id")

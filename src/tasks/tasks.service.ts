@@ -77,10 +77,17 @@ export class TasksService {
   }
 
   filterAll(search: GetTasksDto) {
-    return tasks.filter((t) => {
-      if (search.search && t.title.includes(search.search)) return true;
-      return search.status && t.status === search.status;
+    let f = tasks.filter((t) => {
+      if (!search.search) return true;
+      return t.title.toLowerCase().includes(search.search.toLowerCase());
 
-    })
+    });
+    f = f.filter((t) => {
+      if (!search.status) return true;
+      return t.status === search.status;
+    });
+    return f;
   }
+
+
 }
