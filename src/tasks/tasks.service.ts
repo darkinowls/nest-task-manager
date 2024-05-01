@@ -47,8 +47,9 @@ export class TasksService {
   }
 
   async remove(id: string) {
-
-    return (await this.taskRepo.delete(id)).affected;
+    const res = await this.taskRepo.delete(id)
+    if (!res.affected) throw new NotFoundException("Invalid task id");
+    return res.affected;
   }
 
   async filterAll(search: GetTasksDto): Promise<Task[]> {
