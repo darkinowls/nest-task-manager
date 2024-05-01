@@ -18,9 +18,9 @@ export class TasksController {
   }
 
 
-  @Get('/')
+  @Get("/")
   async findAll(@Query() search?: GetTasksDto) {
-    if ( Object.keys(search).length > 0) {
+    if (Object.keys(search).length > 0) {
       console.log(search);
       return this.tasksService.filterAll(search);
     }
