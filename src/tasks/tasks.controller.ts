@@ -33,7 +33,7 @@ export class TasksController {
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateTaskDto: UpdateTaskDto) {
+  update(@Param("id", ParseIntPipe) id: string, @Body() updateTaskDto: UpdateTaskDto) {
     return this.tasksService.update(+id, updateTaskDto);
   }
 

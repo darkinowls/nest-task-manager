@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3032:5432"
+    volumes:
+      - ${POSTGRES_DATA}:/var/lib/postgresql/data
+
+  app:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3037:3000"
+    environment:
+      - NODE_ENV=production
+    command: sh wait_for.sh postgres:5432 -- node /app/server.js
+    depends_on:
+      - postgres
+
+
+  migrator:
+    build:
+      context: .
+      dockerfile: migrate.Dockerfile
+    depends_on:
+      - postgres
+    command: sh wait_for.sh postgres:5432 -- sh -c "ls && prisma migrate deploy"

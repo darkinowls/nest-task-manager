@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { Task, TaskStatus } from "@src/tasks/entities/task.entity";
@@ -67,8 +67,7 @@ export class TasksService {
   }
 
   remove(id: number) {
-    if (id < 0) throw new BadRequestException("Invalid task id");
-    const t = tasks.find((t) => t.id === id)
+    const t = tasks.find((t) => t.id === id);
     if (!t) throw new NotFoundException("Invalid task id");
 
     tasks = tasks.filter((ta) => ta.id !== id);
