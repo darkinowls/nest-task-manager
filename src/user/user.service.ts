@@ -32,6 +32,9 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    // if (updateUserDto.password) {
+    //   updateUserDto.password = updateUserDto.password;
+    // }
     const res = (await this.ur.update(id, updateUserDto)).affected;
     if (res === 0) throw new NotFoundException();
     return res;

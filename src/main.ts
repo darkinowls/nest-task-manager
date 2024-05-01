@@ -2,12 +2,19 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
+import { EmptyObjectPipe } from "@src/empty-object.pipe";
+// import { EmptyObjectPipe } from "@src/empty-object.pipe";
 // import { I18nValidationPipe } from "nestjs-i18n";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe(),
-    // new I18nValidationPipe(),
+  app.useGlobalPipes(new ValidationPipe(
+      {
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }
+    ),
+    new EmptyObjectPipe(),
   );
   await initSwagger(app);
   await app.listen(3000);

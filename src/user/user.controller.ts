@@ -28,6 +28,7 @@ export class UserController {
 
   @Patch(':id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
+    console.log(updateUserDto);
     return this.userService.update(id, updateUserDto);
   }
 
