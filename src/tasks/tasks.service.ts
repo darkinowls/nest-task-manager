@@ -1,10 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { Task, TaskStatus } from "@src/tasks/entities/task.entity";
+import { GetTasksDto } from "@src/tasks/dto/get-tasks.dto";
 
 
-const tasks: Task[] = [
+let tasks: Task[] = [
   {
     id: 1,
     title: "Task 1",
@@ -34,11 +35,11 @@ const tasks: Task[] = [
 @Injectable()
 export class TasksService {
   create(createTaskDto: CreateTaskDto): Task {
-   const t: Task =  {
-     status: TaskStatus.OPEN,
-     id: tasks.length + 1,
-     ...createTaskDto
-   }
+    const t: Task = {
+      status: TaskStatus.OPEN,
+      id: tasks[tasks.length - 1].id + 1,
+      ...createTaskDto
+    };
     tasks.push(t);
     return t;
 
@@ -49,19 +50,37 @@ export class TasksService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} task`;
+    const t = tasks.find((t) => t.id === id);
+    if (!t) throw new BadRequestException("Invalid task id");
+    return t;
   }
 
   update(id: number, updateTaskDto: UpdateTaskDto) {
+    const taskIndex = tasks.findIndex((t) => t.id === id);
+    if (taskIndex < 0) throw new BadRequestException("Invalid task id");
     const t: Task = {
-      ...tasks[id],
+      ...tasks[taskIndex],
       ...updateTaskDto
-    }
-    tasks[id] = t;
+    };
+    tasks[taskIndex] = t;
     return t;
   }
 
   remove(id: number) {
+    if (id >= tasks.length || id < 0) throw new BadRequestException("Invalid task id");
+
+    tasks = tasks.filter((t) => t.id !== id);
+
+    console.log(tasks);
+
     return `This action removes a #${id} task`;
+  }
+
+  filterAll(search: GetTasksDto) {
+    return tasks.filter((t) => {
+      if (search.search && t.title.includes(search.search)) return true;
+      return search.status && t.status === search.status;
+
+    })
   }
 }
