@@ -4,19 +4,23 @@ import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { GetTasksDto } from "@src/tasks/dto/get-tasks.dto";
+import { AuthDefender } from "@src/decorators/auth.defender";
+import { ControlDecorator } from "@src/decorators/control.decorator";
+import { JwtPayloadDto } from "@src/user/dto/jwt-payload.dto";
+import { GetUser } from "@dist/user/get-user.decorator";
 
 
 
 
-@Controller("tasks")
-@ApiTags("tasks")
+@ControlDecorator("tasks")
+@AuthDefender()
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {
   }
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  create(@Body() createTaskDto: CreateTaskDto, @GetUser() user: JwtPayloadDto) {
+    return this.tasksService.create(createTaskDto, user.id);
   }
 
 

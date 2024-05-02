@@ -1,19 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from "@nestjs/common";
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, UseGuards, Req } from "@nestjs/common";
+import { UserService } from "./user.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 import { PassPipe } from "@src/user/pipes/pass.pipe";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiSecurity, ApiBearerAuth } from "@nestjs/swagger";
 import { IdDto } from "@src/dto/id.dto";
+import { LoginUserDto } from "@src/user/dto/login-user.dto";
+import { JwtService } from "@nestjs/jwt";
+import { JwtPayloadDto } from "@src/user/dto/jwt-payload.dto";
+import { AuthGuard } from "@nestjs/passport";
+import { Request } from "express";
+import { AuthDefender } from "@src/decorators/auth.defender";
+import { ControlDecorator } from "@src/decorators/control.decorator";
+import { GetUser } from "@src/decorators/get-user.decorator";
 
-@Controller('users')
-@ApiTags("users")
+@ControlDecorator("users")
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
+  ) {
+  }
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new user' }) // Rename the operation
-  async create(@Body(PassPipe) createUserDto: CreateUserDto) : Promise<IdDto> {
+  @Post("sign-up/")
+  @ApiOperation({ summary: "Create a new user" }) // Rename the operation
+  async create(@Body(PassPipe) createUserDto: CreateUserDto): Promise<IdDto> {
     return await this.userService.create(createUserDto);
   }
 
@@ -22,19 +33,29 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.findOne(id);
+  // test0@example.com
+  // Test12
+  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QwQGV4YW1wbGUuY29tIiwiaWQiOiI0NzIzZDhkNC0wOTU3LTQwMjQtOWRhZS1iNjc1MDJkNzEyMTMiLCJuYW1lIjoic3RyaW5nIiwiaWF0IjoxNzE0NjU2MzAxLCJleHAiOjE3MTQ2NTk5MDF9.ENVXc2dhzfBJsNkIZY7CoEioRos8P-mIg2LfaLOWqos
+  @Post("/sign-in/")
+  async findOne(@Body() user: LoginUserDto): Promise<string> {
+    const u = await this.userService.findOne(user.email, user.password);
+    const p: JwtPayloadDto = {
+      email: u.email,
+      id: u.id,
+      name: u.name
+    };
+    return await this.jwtService.signAsync(p);
   }
 
-  @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto);
-    return this.userService.update(id, updateUserDto);
+  @AuthDefender()
+  @Patch()
+  update(@GetUser() user: JwtPayloadDto, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(user.id, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.remove(id);
+
+  @Delete(":id")
+  remove(@GetUser() user: JwtPayloadDto) {
+    return this.userService.remove(user.id);
   }
 }

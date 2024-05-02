@@ -5,10 +5,15 @@ import { TasksModule } from "./tasks/tasks.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import { UserModule } from "./user/user.module";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot(
+      {
+        isGlobal: true
+      }
+    ),
     TypeOrmModule.forRootAsync(
       {
         useFactory: () => ({
@@ -21,17 +26,14 @@ import { UserModule } from "./user/user.module";
           autoLoadEntities: true,
           synchronize: process.env.NODE_ENV !== "production"
         })
-
-
       }
     ),
+
 
     UserModule,
     TasksModule
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService],
 })
-export class AppModule {
-
-}
+export class AppModule {}

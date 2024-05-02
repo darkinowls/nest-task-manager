@@ -35,6 +35,7 @@ const initSwagger = (app) => {
     .setTitle("Tasks example")
     .setDescription("The tasks API description")
     .setVersion("1.0")
+    .addBearerAuth( )
     .build();
   const document = SwaggerModule.createDocument(app, config);
 

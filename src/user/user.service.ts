@@ -5,6 +5,7 @@ import { User } from "@src/user/entities/user.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IdDto } from "@src/dto/id.dto";
+import { compare, hash } from "bcrypt";
 
 @Injectable()
 export class UserService {
@@ -16,7 +17,7 @@ export class UserService {
     try {
       return (await this.ur.insert({
         email: createUserDto.email,
-        password: createUserDto.password,
+        password: await hash(createUserDto.password, 10),
         name: createUserDto.name
       })).identifiers[0] as IdDto;
     } catch (e) {
@@ -28,12 +29,16 @@ export class UserService {
     return this.ur.find();
   }
 
-  async findOne(id: string) {
-    return await this.ur.findOne({
+  async findOne(email: string, password: string) {
+    const u = await this.ur.findOne({
       where: {
-        id: id
-      }
+        email
+      },
     });
+    if (!u || !await compare(password, u.password)) {
+      throw new NotFoundException();
+    }
+    return u
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

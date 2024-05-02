@@ -18,7 +18,7 @@ export class TasksService {
     const t: Task = await this.taskRepo.save(
       {
         status: TaskStatus.OPEN,
-        ...createTaskDto
+        ...createTaskDto,
       }
     );
     return t;
