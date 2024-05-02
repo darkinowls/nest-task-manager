@@ -17,7 +17,7 @@ import { UserModule } from "./user/user.module";
           password: process.env.POSTGRES_PASSWORD,
           host: process.env.POSTGRES_HOST,
           database: process.env.POSTGRES_DB,
-          port: parseInt(process.env.POSTGRES_PORT),
+          port: parseInt(process.env.POSTGRES_PORT || "5432"),
           autoLoadEntities: true,
           synchronize: process.env.NODE_ENV !== "production"
         })

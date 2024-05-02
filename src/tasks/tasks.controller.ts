@@ -6,6 +6,8 @@ import { ApiTags } from "@nestjs/swagger";
 import { GetTasksDto } from "@src/tasks/dto/get-tasks.dto";
 
 
+
+
 @Controller("tasks")
 @ApiTags("tasks")
 export class TasksController {
@@ -19,12 +21,13 @@ export class TasksController {
 
 
   @Get("/")
-  async findAll(@Query() search?: GetTasksDto) {
-    if (Object.keys(search).length > 0) {
-      console.log(search);
-      return this.tasksService.filterAll(search);
+  async findAll(@Query() q: GetTasksDto) {
+    console.log(q);
+    if (q.search || q.status) {
+      console.log(q);
+      return await this.tasksService.filterAll(q);
     }
-    return await this.tasksService.findAll();
+    return await this.tasksService.findAll(q);
   }
 
   @Get(":id")

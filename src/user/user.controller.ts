@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PassPipe } from "@src/user/pipes/pass.pipe";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { IdDto } from "@src/dto/id.dto";
 
 @Controller('users')
 @ApiTags("users")
@@ -12,8 +13,8 @@ export class UserController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' }) // Rename the operation
-  create(@Body(PassPipe) createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body(PassPipe) createUserDto: CreateUserDto) : Promise<IdDto> {
+    return await this.userService.create(createUserDto);
   }
 
   @Get()

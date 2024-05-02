@@ -3,23 +3,30 @@ import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ValidationPipe } from "@nestjs/common";
 import { EmptyObjectPipe } from "@src/empty-object.pipe";
-// import { EmptyObjectPipe } from "@src/empty-object.pipe";
-// import { I18nValidationPipe } from "nestjs-i18n";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe(
+  app.useGlobalPipes(
+    new ValidationPipe(
       {
         whitelist: true,
         forbidNonWhitelisted: true,
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true
+        }
       }
+
     ),
-    new EmptyObjectPipe(),
+    new EmptyObjectPipe()
   );
+
+
   await initSwagger(app);
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap();
 
 
@@ -32,4 +39,4 @@ const initSwagger = (app) => {
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup("api", app, document);
-}
+};

@@ -2,9 +2,10 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { Task, TaskStatus } from "@src/tasks/entities/task.entity";
-import { GetTasksDto } from "@src/tasks/dto/get-tasks.dto";
+
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { GetTasksDto } from "@src/tasks/dto/get-tasks.dto";
 
 
 @Injectable()
@@ -23,8 +24,13 @@ export class TasksService {
     return t;
   }
 
-  async findAll() {
-    return this.taskRepo.find();
+  async findAll(page: GetTasksDto) {
+    return this.taskRepo.findAndCount(
+      {
+        skip: page.offset,
+        take: page.limit
+      }
+    );
   }
 
   async findOne(id: string) {
@@ -47,23 +53,23 @@ export class TasksService {
   }
 
   async remove(id: string) {
-    const res = await this.taskRepo.delete(id)
+    const res = await this.taskRepo.delete(id);
     if (!res.affected) throw new NotFoundException("Invalid task id");
     return res.affected;
   }
 
-  async filterAll(search: GetTasksDto): Promise<Task[]> {
+  async filterAll(q: GetTasksDto) {
     let query = this.taskRepo.createQueryBuilder("task");
 
-    if (search.search) {
-      query = query.where("task.title LIKE :search", { search: `%${search.search}%` });
+    if (q.search) {
+      query = query.where("task.title LIKE :search", { search: `%${q.search}%` });
     }
 
-    if (search.status) {
-      query = query.andWhere("task.status = :status", { status: search.status });
+    if (q.status) {
+      query = query.andWhere("task.status = :status", { status: q.status });
     }
 
-    return await query.getMany();
+    return await query.skip(q.offset).limit(q.limit).getManyAndCount();
 
   }
 
