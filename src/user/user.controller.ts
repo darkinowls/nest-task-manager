@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, UseGuards, Req } from "@nestjs/common";
+import {
+  Get,
+  Post,
+  Body,
+  Patch,
+  Delete
+} from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { PassPipe } from "@src/user/pipes/pass.pipe";
-import { ApiTags, ApiOperation, ApiSecurity, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiOperation } from "@nestjs/swagger";
 import { IdDto } from "@src/dto/id.dto";
 import { LoginUserDto } from "@src/user/dto/login-user.dto";
 import { JwtService } from "@nestjs/jwt";
 import { JwtPayloadDto } from "@src/user/dto/jwt-payload.dto";
-import { AuthGuard } from "@nestjs/passport";
-import { Request } from "express";
 import { AuthDefender } from "@src/decorators/auth.defender";
 import { ControlDecorator } from "@src/decorators/control.decorator";
 import { GetUser } from "@src/decorators/get-user.decorator";
@@ -24,7 +27,7 @@ export class UserController {
 
   @Post("sign-up/")
   @ApiOperation({ summary: "Create a new user" }) // Rename the operation
-  async create(@Body(PassPipe) createUserDto: CreateUserDto): Promise<IdDto> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<IdDto> {
     return await this.userService.create(createUserDto);
   }
 

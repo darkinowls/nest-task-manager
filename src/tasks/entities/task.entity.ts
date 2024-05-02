@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "@src/user/entities/user.entity";
+import { Exclude } from "class-transformer";
 
 @Entity()
 export class Task {
@@ -15,9 +16,8 @@ export class Task {
   @ManyToOne(() => User, user => user.tasks,
     {
       eager: false,
-    }
-
-    )
+      nullable: false,
+    })
   user: User
 }
 

@@ -25,29 +25,32 @@ export class TasksController {
 
 
   @Get("/")
-  async findAll(@Query() q: GetTasksDto) {
+  async findAll(@Query() q: GetTasksDto, @GetUser() user: JwtPayloadDto) {
     console.log(q);
     if (q.search || q.status) {
       console.log(q);
-      return await this.tasksService.filterAll(q);
+      return await this.tasksService.filterAll(q, user.id);
     }
-    return await this.tasksService.findAll(q);
+    return await this.tasksService.findAll(q, user.id);
   }
 
   @Get(":id")
-  findOne(@Param("id", ParseUUIDPipe) id: string) {
-    return this.tasksService.findOne(id);
+  findOne(@Param("id", ParseUUIDPipe) id: string, @GetUser() user: JwtPayloadDto) {
+    return this.tasksService.findOne(id, user.id);
   }
 
   @Patch(":id")
-  update(@Param("id", ParseUUIDPipe) id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(id, updateTaskDto);
+  update(
+    @GetUser() user: JwtPayloadDto,
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() updateTaskDto: UpdateTaskDto) {
+    return this.tasksService.update(id, updateTaskDto, user.id);
   }
 
 
   @Delete(":id")
-  remove(@Param("id", ParseUUIDPipe) id: string) {
-    return this.tasksService.remove(id);
+  remove(@Param("id", ParseUUIDPipe) id: string, @GetUser() user:  JwtPayloadDto) {
+    return this.tasksService.remove(id, user.id);
   }
 }
 

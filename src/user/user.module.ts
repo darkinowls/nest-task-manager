@@ -16,7 +16,7 @@ import { ConfigModule } from "@nestjs/config";
       useFactory: async () => ({
         secret: process.env.JWT_SECRET,
         signOptions: {
-          expiresIn: "1h"
+          expiresIn: "100d"
         }
       })
     }),
