@@ -16,12 +16,14 @@ import { JwtPayloadDto } from "@src/user/dto/jwt-payload.dto";
 import { AuthDefender } from "@src/decorators/auth.defender";
 import { ControlDecorator } from "@src/decorators/control.decorator";
 import { GetUser } from "@src/decorators/get-user.decorator";
+import { ConfigService } from '@nestjs/config';
 
 @ControlDecorator("users")
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService
   ) {
   }
 
