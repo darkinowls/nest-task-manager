@@ -15,5 +15,6 @@ export default new DataSource({
 	port: parseInt(configService.getOrThrow('POSTGRES_PORT')),
 	entities: ["dist/**/*.entity{.ts,.js}"],
 	migrations: ['migrations/**']
+
 	// autoLoadEntities: true,
 });
