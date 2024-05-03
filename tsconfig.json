@@ -12,7 +12,7 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-
+    "sourceRoot": "./src",
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
@@ -27,5 +27,9 @@
         "./*"
       ]
     }
-  }
+
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }
