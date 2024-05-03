@@ -21,6 +21,8 @@ async function bootstrap() {
     new EmptyObjectPipe()
   );
 
+  // TODO: Enable CORS add env origins
+  app.enableCors()
 
   await initSwagger(app);
   await app.listen(3000);
