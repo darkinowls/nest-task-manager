@@ -31,7 +31,7 @@ export class TasksController {
   async findAll(@Query() q: GetTasksDto, @GetUser() user: JwtPayloadDto) {
     this.logger.log(q.search)
     if (q.search || q.status) {
-      return await this.tasksService.filterAll(q, user.id);
+      return this.tasksService.filterAll(q, user.id);
     }
     return await this.tasksService.findAll(q, user.id);
   }

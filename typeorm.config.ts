@@ -6,15 +6,17 @@ config();
 
 const configService = new ConfigService();
 
-export default new DataSource({
+const dataSource = new DataSource({
 	type: 'postgres',
 	username: configService.getOrThrow('POSTGRES_USER'),
 	password: configService.getOrThrow('POSTGRES_PASSWORD'),
 	host: configService.getOrThrow('POSTGRES_HOST'),
 	database: configService.getOrThrow('POSTGRES_DB'),
 	port: parseInt(configService.getOrThrow('POSTGRES_PORT')),
-	entities: ["dist/**/*.entity{.ts,.js}"],
+	entities: ['dist/**/*.entity{.ts,.js}'],
 	migrations: ['migrations/**']
 
 	// autoLoadEntities: true,
 });
+
+export default dataSource;

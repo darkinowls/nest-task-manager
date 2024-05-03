@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Task } from "@src/tasks/entities/task.entity";
+import { Task } from '../../tasks/entities/task.entity';
 
 @Entity()
 export class User {
@@ -11,9 +11,12 @@ export class User {
   email: string;
 
   @Column(
+
   )
   password: string;
 
+  @Column({ nullable: true }) // Nullable because initially, the user might not have an image
+  avatarImage: string; // Field to store the path or URL of the image
 
   @Column()
   name: string;

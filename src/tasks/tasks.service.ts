@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
-import { Task, TaskStatus } from "@src/tasks/entities/task.entity";
+import { Task, TaskStatus } from './entities/task.entity';
 
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { GetTasksDto } from "@src/tasks/dto/get-tasks.dto";
+import { GetTasksDto } from './dto/get-tasks.dto';
 
 
 @Injectable()
