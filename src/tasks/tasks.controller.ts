@@ -1,13 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from "@nestjs/common";
+import { Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe, Logger } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
-import { ApiTags } from "@nestjs/swagger";
 import { GetTasksDto } from "@src/tasks/dto/get-tasks.dto";
 import { AuthDefender } from "@src/decorators/auth.defender";
 import { ControlDecorator } from "@src/decorators/control.decorator";
 import { JwtPayloadDto } from "@src/user/dto/jwt-payload.dto";
-import { GetUser } from "@dist/user/get-user.decorator";
+import { GetUser } from '@src/decorators/get-user.decorator';
+
 
 
 
@@ -15,6 +15,9 @@ import { GetUser } from "@dist/user/get-user.decorator";
 @ControlDecorator("tasks")
 @AuthDefender()
 export class TasksController {
+
+  private readonly logger = new Logger(TasksController.name);
+
   constructor(private readonly tasksService: TasksService) {
   }
 
@@ -26,9 +29,8 @@ export class TasksController {
 
   @Get("/")
   async findAll(@Query() q: GetTasksDto, @GetUser() user: JwtPayloadDto) {
-    console.log(q);
+    this.logger.log(q.search)
     if (q.search || q.status) {
-      console.log(q);
       return await this.tasksService.filterAll(q, user.id);
     }
     return await this.tasksService.findAll(q, user.id);

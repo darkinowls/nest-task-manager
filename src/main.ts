@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { ValidationPipe } from "@nestjs/common";
+import { Logger, ValidationPipe } from "@nestjs/common";
 import { EmptyObjectPipe } from "@src/empty-object.pipe";
 
 async function bootstrap() {
@@ -24,7 +24,7 @@ async function bootstrap() {
 
   await initSwagger(app);
   await app.listen(3000);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  Logger.log(`Application is running on: ${await app.getUrl()}`)
 }
 
 bootstrap();
