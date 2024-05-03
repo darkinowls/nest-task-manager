@@ -3,12 +3,12 @@ import {
 	Post,
 	Body,
 	Patch,
-	Delete, UseInterceptors, UploadedFile
+	Delete, UseInterceptors, Req
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
 
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -16,9 +16,9 @@ import { ControlDecorator } from '../decorators/control.decorator';
 import { IdDto } from '../dto/id.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
-import { AuthDefender } from '../decorators/auth.defender';
 import { GetUser } from '../decorators/get-user.decorator';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilenameInterceptor } from '@src/filename.interceptor';
+import { AuthDefender } from '@src/decorators/auth.defender';
 
 @ControlDecorator('users')
 export class UserController {
@@ -56,14 +56,10 @@ export class UserController {
 
 	@AuthDefender()
 	@Patch()
-	@UseInterceptors(FileInterceptor('image',
-			{
-				dest: './uploads'
-			}
-		)
-	)
-	update(@GetUser() user: JwtPayloadDto, @Body() updateUserDto: UpdateUserDto, @UploadedFile() file: File) {
-		console.log(file);
+	@UseInterceptors(new FilenameInterceptor('avatar',))
+	@ApiConsumes('multipart/form-data')
+	update(@GetUser() user: JwtPayloadDto, @Body() updateUserDto: UpdateUserDto,) {
+		// console.log(updateUserDto.avatar!.filename);
 		return this.userService.update(user.id, updateUserDto);
 	}
 

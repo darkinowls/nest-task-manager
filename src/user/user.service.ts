@@ -41,11 +41,13 @@ export class UserService {
     return u
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto, ) {
     // if (updateUserDto.password) {
     //   updateUserDto.password = updateUserDto.password;
     // }
-    const res = (await this.ur.update(id, updateUserDto)).affected;
+    const {avatar, ...rest} = updateUserDto;
+    const res = (await this.ur.update(id,
+      {...rest,avatarImage: avatar?.filename })).affected;
     if (res === 0) throw new NotFoundException();
     return res;
   }
