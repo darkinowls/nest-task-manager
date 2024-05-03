@@ -6,6 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import { UserModule } from "./user/user.module";
 import { JwtModule } from "@nestjs/jwt";
+import databaseConfig from '@typeorm.config';
 
 @Module({
   imports: [
@@ -24,7 +25,6 @@ import { JwtModule } from "@nestjs/jwt";
           database: process.env.POSTGRES_DB,
           port: parseInt(process.env.POSTGRES_PORT || "5432"),
           autoLoadEntities: true,
-          synchronize: process.env.NODE_ENV !== "production"
         })
       }
     ),
